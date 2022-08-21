@@ -1,7 +1,7 @@
 "use strict";
 
 const { getSnsId } = require("./module/getSnsId");
-const { getUsersByDB, getUserPaylod } = require("./module/userModel");
+const { getUserPaylod } = require("./module/userModel");
 const { generateJwt } = require("./module/generateJwt");
 
 module.exports.hello = async (event) => {
@@ -28,9 +28,7 @@ module.exports.hello = async (event) => {
   // 500 Error Block
   try {
     // 3. snsId로 user 테이블에서 유저가 이미 존재하는지 확인
-    //const { isNew, ...payload } = getUserPaylod(snsId);
-    const result = await getUsersByDB();
-    console.log("user list 테스트", result);
+    const { isNew, ...payload } = await getUserPaylod(snsId);
 
     const { accessToken, refreshToken } = generateJwt(payload);
     console.log("accessToken", accessToken);

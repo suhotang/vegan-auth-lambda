@@ -1,41 +1,45 @@
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 
 module.exports = {
-  getUsersByDB: () => new Promise((resolve, reject) => {
-    // Mysql Connection
-    const mysqlConnection = mysql.createConnection({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWD,
-      database: process.env.DB_NAME
-    });
-    mysqlConnection.connect();
+  getUserPaylod: async (snsId) => {
+    try {
+      // Mysql Connection
+      const mysqlConnection = await mysql.createConnection({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWD,
+        database: process.env.DB_NAME,
+      });
 
-    // Test Query
-    mysqlConnection.query('select * from user', (error, result, _field) => {
-      if (result) {
-        resolve(result);
+      let isNew = false;
+      let userId = null;
+      const [users, fields] = await mysqlConnection.query(
+        `select * from user where sns_id=${snsId}`
+      );
+      console.log(users);
+
+      if (Array.isArray(users) && users.length > 0) {
+        console.log("이미 존재하는 사용자");
+        userId = users[0]?.id;
+      } else {
+        console.log("존재하지 않는 사용자");
+        isNew = true;
       }
-      
-      if (error) {
-        console.log("db-error:", error);
-        reject("Mysql Error");
+
+      if (isNew) {
+        console.log("회원가입!");
+        const userInsertSql = `INSERT INTO user (sns_id) VALUES ('${snsId}')`;
+        const [results] = await mysqlConnection.query(userInsertSql);
+        userId = results?.insertId;
       }
-    });
 
-    // Mysql Disconnected
-    mysqlConnection.end();
-  }),
-  getUserPaylod: (snsId) => {
-    // 회원번호로 user table을 조회해서 해당하는 row가 있는지 확인
-    // 해당하는 row가 있으면 사용자 정보를 가져온다.
-    // // mysql find
+      // Mysql Disconnected
+      mysqlConnection.end();
 
-    // // 4. 유저가 존재하지 않는다면, 새로운 유저 생성
-    // if (!isExist) {
-    //   createNewUser(snsId);
-    // }
-    return { userId: snsId, nickname: "test", profile: null, isNew: true };
+      return { userId, isNew };
+    } catch (e) {
+      throw e;
+    }
   },
 };
