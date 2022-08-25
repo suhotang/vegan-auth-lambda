@@ -88,6 +88,7 @@ provider:
 
 functions:
   hello:
+    timeout: 10
     handler: handler.hello
     events:
       - http:
