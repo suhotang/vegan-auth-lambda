@@ -17,6 +17,7 @@ module.exports.hello = async (event) => {
 
     // 2. accessToken으로 provider의 회원 정보 API를 호출하여 회원을 식별할 수 있는 id 정보를 가져옴
     snsId = await getSnsId(provider, token);
+    console.log("사용자 식별번호", snsId);
   } catch (e) {
     console.log("Error 401:", e);
     return {
@@ -29,11 +30,7 @@ module.exports.hello = async (event) => {
   try {
     // 3. snsId로 user 테이블에서 유저가 이미 존재하는지 확인
     const { isNew, ...payload } = await getUserPaylod(snsId);
-
     const { accessToken, refreshToken } = generateJwt(payload);
-    console.log("accessToken", accessToken);
-    console.log("refreshToken", refreshToken);
-    console.log("isNew", isNew);
 
     return {
       statusCode: 200,

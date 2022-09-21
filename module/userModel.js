@@ -3,7 +3,7 @@ const mysql = require("mysql2/promise");
 module.exports = {
   getUserPaylod: async (snsId) => {
     try {
-      if (snsId) {
+      if (!snsId) {
         throw "유효하지 않은 snsId";
       }
 
@@ -21,7 +21,7 @@ module.exports = {
       const [users, fields] = await mysqlConnection.query(
         `select * from user where sns_id='${snsId}'`
       );
-      //console.log(users);
+      console.log(users);
 
       if (Array.isArray(users) && users.length > 0) {
         console.log("이미 존재하는 사용자");

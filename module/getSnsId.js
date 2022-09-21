@@ -26,6 +26,7 @@ module.exports = {
             "https://kapi.kakao.com/v2/user/me",
             token
           );
+          console.log("kakao", kakaoUserData);
           snsId = kakaoUserData?.id;
           break;
         case "naver":
@@ -43,7 +44,7 @@ module.exports = {
             idToken: token,
           });
           const payload = ticket.getPayload();
-          snsId = payload["sub"]; //21자리의 Google 회원 id 번호
+          snsId = payload["sub"]; // 21자리의 Google 회원 id 번호
           break;
         default:
           // 실패했으면 사용자에게 로그인 실패했다는 응답을 보낸다.

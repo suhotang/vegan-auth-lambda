@@ -42,7 +42,6 @@ provider:
     subnetIds:
       - subnet-0d44d7b41ddab03c7
       - subnet-0706736d33ed39a11
-      - subnet-02846006e77cdd37f
       - subnet-04d8d8982a624b3ae
   iam:
     role:
@@ -87,13 +86,13 @@ provider:
 #    - include-me-dir/**
 
 functions:
-  hello:
+  veganAuth:
     timeout: 10
     handler: handler.hello
-    events:
-      - http:
-          path: auth/token
-          method: post
+#   events:
+#     - http:
+#         path: auth/token
+#         method: post
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
