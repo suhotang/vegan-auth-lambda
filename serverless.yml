@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: lambdatest
+service: vegan-v1
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -88,7 +88,7 @@ provider:
 functions:
   veganAuth:
     timeout: 10
-    handler: handler.hello
+    handler: handler.router
 #   events:
 #     - http:
 #         path: auth/token
