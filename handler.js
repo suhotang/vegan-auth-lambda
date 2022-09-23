@@ -6,11 +6,12 @@ const { generateJwt } = require("./module/generateJwt");
 const api = require("lambda-api")();
 
 api.post("/auth/token", async (req, res) => {
+  console.log("POST /auth/token");
   let snsId = "";
   // 401 Error Block
   try {
     // 1. body로 토큰을 받는다.
-    const body = req?.body && JSON.parse(req?.body);
+    const body = req?.body
     const provider = body?.provider;
     const token = body?.token;
 
@@ -21,10 +22,9 @@ api.post("/auth/token", async (req, res) => {
     console.log("사용자 식별번호", snsId);
   } catch (e) {
     console.log("Error 401:", e);
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ message: "사용자 검증 실패" }),
-    };
+    return res.status(401).json({
+      message: "사용자 검증 실패"
+    });
   }
 
   // 500 Error Block
@@ -33,28 +33,32 @@ api.post("/auth/token", async (req, res) => {
     const { isNew, ...payload } = await getUserPaylod(snsId);
     const { accessToken, refreshToken } = generateJwt(payload);
 
-    console.log("accessToken");
     res.cookie("accessToken", accessToken, { maxAge: 3600 * 1000, httpOnly: true }).send();
-
-    console.log("refreshToken");
     res.cookie("refreshToken", refreshToken, { maxAge: 3600 * 1000, httpOnly: true }).send();
 
-    // return {
-    //   statusCode: 200,
-    //   body: JSON.stringify({ message: "로그인 성공", data: { isNew } }),
-    //   multiValueHeaders: {
-    //     "Set-Cookie": [
-    //       `accessToken=${accessToken}`,
-    //       `refreshToken=${refreshToken}`,
-    //     ],
-    //   },
-    // };
-    res.status(200).json({
+    return res.status(200).json({
       message: "로그인 성공", data: { isNew }
     });
   } catch (e) {
     console.log("Error 500:", e);
-    res.status(500).json({
+    return res.status(500).json({
+      message: "서버 내부 에러 발생"
+    });
+  }
+});
+
+api.post("/auth/logout", async (req, res) => {
+  try {
+    console.log("POST /auth/logout");
+    res.clearCookie("accessToken").send();
+    res.clearCookie("refreshToken").send();
+
+    return res.status(200).json({
+      message: "로그아웃 성공"
+    });
+  } catch (e) {
+    console.log("Error 500:", e);
+    return res.status(500).json({
       message: "서버 내부 에러 발생"
     });
   }
