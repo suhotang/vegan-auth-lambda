@@ -113,5 +113,6 @@ api.delete("/auth/secession", async (req, res) => {
 });
 
 module.exports.router = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   return await api.run(event, context);
 };
