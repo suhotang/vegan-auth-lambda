@@ -43,14 +43,13 @@ provider:
       - subnet-0d44d7b41ddab03c7
       - subnet-0706736d33ed39a11
       - subnet-04d8d8982a624b3ae
-  iam:
-    role:
-      statements:
-        - Effect: "Allow"
-          Action:
-            - "rds-db:connect"
-          Resource: "arn:aws:rds:ap-northeast-2:432028973697:db-proxy:prx-008ca05e459d43d59"
-
+  # iam:
+  #   role:
+  #     statements:
+  #       - Effect: "Allow"
+  #         Action:
+  #           - "rds-db:connect"
+  #         Resource: "arn:aws:rds:ap-northeast-2:432028973697:db-proxy:prx-008ca05e459d43d59"
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
