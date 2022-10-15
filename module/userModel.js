@@ -21,7 +21,7 @@ module.exports = {
       const [users, fields] = await mysqlConnection.query(
         `select * from user where sns_id='${snsId}'`
       );
-      console.log(users);
+      //console.log(users);
 
       if (Array.isArray(users) && users.length > 0) {
         console.log("이미 존재하는 사용자");
@@ -46,4 +46,34 @@ module.exports = {
       throw e;
     }
   },
+  getAdminUserById: async (id) => {
+    try {
+      // Mysql Connection
+      const mysqlConnection = await mysql.createConnection({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWD,
+        database: process.env.DB_NAME,
+      });
+
+      const [users, _fields] = await mysqlConnection.query(
+        `select * from admin_info where password_identifier='${id}'`
+      );
+
+      // Mysql Disconnected
+      mysqlConnection.end();
+
+      if (users.length < 1) {
+        throw {
+          statusCode: 400,
+          message: `올바르지 않은 id: ${id}`
+        }
+      }
+
+      return users[0];
+    } catch (e) {
+      throw e;
+    }
+  }
 };

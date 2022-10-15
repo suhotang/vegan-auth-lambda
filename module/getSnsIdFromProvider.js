@@ -15,7 +15,7 @@ async function getUserinfoByProvider(url, token) {
 }
 
 module.exports = {
-  getSnsId: async (provider, token) => {
+  getSnsIdFromProvider: async (provider, token) => {
     // accessToken으로 provider의 회원 정보 API를 호출하여 사용자 정보를 가져옴
     // 사용자 정보에서 회원번호를 가져옴
     try {

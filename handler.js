@@ -1,7 +1,8 @@
 "use strict";
 
-const { getSnsId } = require("./module/getSnsId");
-const { getUserPaylod } = require("./module/userModel");
+const CryptoJS = require("crypto-js");
+const { getSnsIdFromProvider } = require("./module/getSnsIdFromProvider");
+const { getUserPaylod, getAdminUserById } = require("./module/userModel");
 const { generateJwt } = require("./module/generateJwt");
 const api = require("lambda-api")();
 
@@ -19,7 +20,7 @@ api.post("/auth/token", async (req, res) => {
     console.log("body value", provider, token);
 
     // 2. accessToken으로 provider의 회원 정보 API를 호출하여 회원을 식별할 수 있는 id 정보를 가져옴
-    snsId = await getSnsId(provider, token);
+    snsId = await getSnsIdFromProvider(provider, token);
     // console.log("사용자 식별번호", snsId);
   } catch (e) {
     console.log("Error 401:", e);
@@ -59,19 +60,45 @@ api.post("/auth/login", async (req, res) => {
 
     console.log("body value", id, password);
 
-    // db에서 id로 row 조회
-    // id가 db에 없으면 500 return (로그인 실패)
+    // DB에서 id로 Row 조회
+    // id가 db에 없으면 400 return (로그인 실패)
+    const userRow = await getAdminUserById(id);
     
-    // row의 password와 받은 password 비교 (암호화)
-    // password가 일치하지 않으면 500 return
+    // row의 password와 받은 password 비교
+    // password가 일치하지 않으면 400 return (로그인 실패)
+    if (userRow) {
+      // let salt = CryptoJS.lib.WordArray.random(128 / 8);
+      // salt = CryptoJS.enc.Hex.stringify(salt);
+      let cryptoInputPassword = CryptoJS.PBKDF2(password, userRow?.salt, {
+        keySize: 256 / 32,
+        iterations: 1000
+      });
+      cryptoInputPassword = CryptoJS.enc.Hex.stringify(cryptoInputPassword);
 
-    // password가 일치하면 쿠키에 토큰 설정
-    // 토큰 설정이 완료되면
+      if (userRow?.password !== cryptoInputPassword) {
+        throw {
+          statusCode: 400,
+          message: "올바르지 않은 password"
+        }
+      }
+    }
 
-    // return res.status(200).json({
-    //   message: "로그인 성공", data: { isNew }
-    // });
+    const payload = { userId: userRow?.userId, isAdmin: true };
+    const { accessToken, refreshToken } = generateJwt(payload);
+
+    res.cookie("accessToken", accessToken, { maxAge: 3600 * 1000, httpOnly: true }).send();
+    res.cookie("refreshToken", refreshToken, { maxAge: 3600 * 1000, httpOnly: true }).send();
+
+    return res.status(200).json({
+      message: "로그인 성공"
+    });
   } catch (e) {
+    if (typeof e === "object" && e?.statusCode === 400) {
+      console.log("Error 400:", e);
+      return res.status(400).json({
+        message: "아이디 or 비밀번호가 올바르지 않습니다."
+      });
+    }
     console.log("Error 500:", e);
     return res.status(500).json({
       message: "서버 내부 에러 발생"
