@@ -56,10 +56,7 @@ api.post("/auth/token", async (req, res) => {
       data: { isNew },
     });
   } catch (e) {
-    console.log("Error 500:", e);
-    return res.status(500).json({
-      message: "서버 내부 에러 발생",
-    });
+    res.error("서버 내부 에러");
   }
 });
 
@@ -118,20 +115,14 @@ api.post("/auth/login", async (req, res) => {
     });
   } catch (e) {
     if (typeof e === "object" && e?.statusCode === 400) {
-      console.log("Error 400:", e);
-      return res.status(400).json({
-        message: "아이디 or 비밀번호가 올바르지 않습니다.",
-      });
+      res.error(400, "아이디 or 비밀번호가 올바르지 않습니다.");
     }
-    console.log("Error 500:", e);
-    return res.status(500).json({
-      message: "서버 내부 에러 발생",
-    });
+    res.error("서버 내부 에러");
   }
 });
 
 // 로그아웃
-api.post("/auth/logout", async (req, res) => {
+api.post("/auth/logout", async (_req, res) => {
   console.log("POST /auth/logout");
   try {
     res.clearCookie("accessToken").send();
@@ -141,25 +132,7 @@ api.post("/auth/logout", async (req, res) => {
       message: "로그아웃 성공",
     });
   } catch (e) {
-    console.log("Error 500:", e);
-    return res.status(500).json({
-      message: "서버 내부 에러 발생",
-    });
-  }
-});
-
-// 회원 탈퇴
-api.delete("/auth/secession", async (req, res) => {
-  console.log("POST /auth/secession");
-  try {
-    // return res.status(200).json({
-    //   message: "로그아웃 성공"
-    // });
-  } catch (e) {
-    console.log("Error 500:", e);
-    return res.status(500).json({
-      message: "서버 내부 에러 발생",
-    });
+    res.error("서버 내부 에러");
   }
 });
 
