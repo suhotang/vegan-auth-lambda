@@ -27,9 +27,6 @@ module.exports = {
     const [userResults] = await mysqlConnection.query(userInsertSql);
     const userId = userResults?.insertId;
 
-    const userDetailInsertSql = `INSERT INTO user_detail (user_id) VALUES ('${userId}')`;
-    const [detailResults] = await mysqlConnection.query(userDetailInsertSql);
-
     mysqlConnection.end();
 
     return userId;
