@@ -1,5 +1,5 @@
 const { getSnsIdFromProvider } = require("../util/getSnsIdFromProvider");
-const { getUserPaylod } = require("../model/userModel");
+const { getUserPaylod, createNewUser } = require("../model/userModel");
 const {
   generateNewTokens,
   generateNewAccessToken,
@@ -30,9 +30,16 @@ module.exports = {
 
     try {
       // 3. snsId로 user 테이블에서 유저가 이미 존재하는지 확인
-      const { isNew, ...payload } = await getUserPaylod(snsId);
+      let isNew = false;
+      let userId = await getUserPaylod(snsId);
+      if (!userId) {
+        // 신규 사용자 등록
+        userId = await createNewUser();
+        isNew = true;
+      }
+
       const { accessToken, refreshTokenUUID } = await generateNewTokens(
-        payload,
+        { userId },
         process.env.JWT_SECRET_KEY
       );
 

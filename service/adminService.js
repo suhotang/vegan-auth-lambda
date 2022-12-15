@@ -37,6 +37,7 @@ module.exports = {
       }
 
       // accessToken과 refreshToken을 생성, 응답의 cookie 헤더에 세팅해준다.
+      // TODO: 운영자 타입 별 권한 값 설정
       const jwtPayload = { userId: userRow?.userId, authority: [] };
       const { accessToken, refreshTokenUUID } = await generateNewTokens(
         jwtPayload,

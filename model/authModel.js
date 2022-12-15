@@ -11,7 +11,7 @@ module.exports = {
     const mysqlConnection = await getMysqlConnection();
     const uuid = uuidv4();
 
-    // TODO: refreshToken 테이블에 userId, uuid, refreshToken 저장
+    // TODO: "refresh_token" 테이블에 user_id, uuid, refresh_token 저장
 
     mysqlConnection.end();
 
