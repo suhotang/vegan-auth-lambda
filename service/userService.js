@@ -82,6 +82,10 @@ module.exports = {
       );
       // 새로운 accessToken을 세팅해준다.
       res.cookie("accessToken", newAccessToken, cookieOption).send();
+
+      return res.status(200).json({
+        message: "토큰 갱신 성공",
+      });
     } catch (e) {
       if (typeof e === "object" && e?.statusCode === 401) {
         res.error(401, "권한이 없는 사용자");
