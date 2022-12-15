@@ -39,7 +39,6 @@ module.exports = {
         case "google":
           // google의 경우 jwt 형식의 id_token을 받아올 수 있기 때문에
           // google에 검증 요청을 하지 않아도 token의 유효성을 직접 검증할 수 있다.
-
           const ticket = await client.verifyIdToken({
             idToken: token,
           });
@@ -52,9 +51,7 @@ module.exports = {
       }
       return snsId;
     } catch (e) {
-      console.log("사용자 검증 실패!");
-      console.log(e);
-      throw "사용자 검증 실패!";
+      throw `사용자 검증 실패 with Error: ${e}`;
     }
   },
 };
