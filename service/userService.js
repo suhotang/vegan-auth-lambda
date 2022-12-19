@@ -51,6 +51,7 @@ module.exports = {
         data: { isNew },
       });
     } catch (e) {
+      console.log(e);
       res.error("서버 내부 에러");
     }
   },
@@ -64,6 +65,7 @@ module.exports = {
         message: "로그아웃 성공",
       });
     } catch (e) {
+      console.log(e);
       res.error("서버 내부 에러");
     }
   },
@@ -97,6 +99,7 @@ module.exports = {
       if (typeof e === "object" && e?.statusCode === 401) {
         res.error(401, "권한이 없는 사용자");
       }
+      console.log(e);
       res.error("서버 내부 에러");
     }
   },

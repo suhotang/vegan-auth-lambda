@@ -15,7 +15,7 @@ module.exports = {
     mysqlConnection.end();
 
     if (Array.isArray(users) && users.length > 0) {
-      return userId;
+      return users[0]?.id;
     } else {
       return false;
     }

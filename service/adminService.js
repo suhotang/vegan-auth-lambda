@@ -54,6 +54,7 @@ module.exports = {
       if (typeof e === "object" && e?.statusCode === 400) {
         res.error(400, "아이디 or 비밀번호가 올바르지 않습니다.");
       }
+      console.log(e);
       res.error("서버 내부 에러");
     }
   },
